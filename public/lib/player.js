@@ -7,10 +7,14 @@ function Player(x, y){
 
   this.show = function(){
     stroke(255);
-    this.x += this.vel;
     this.edgeCheck();
     rect(this.x, this.y, this.width, this.height);
   };
+
+  this.update = function(x, y){
+    this.x = x;
+    this.y = y;
+  }
 
   this.setSpeed = function(vel){
     this.vel = vel;
