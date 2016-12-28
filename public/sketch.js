@@ -1,8 +1,11 @@
 var P1;
+var P2;
+var socket;
 
 
 function setup() {
   createCanvas(800, 640);
+  socket = io.connect("http://localhost:8080")
   P1 = new Player(50, 25);
   P2 = new Player(50, height - 75);
 }
