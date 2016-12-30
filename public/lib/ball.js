@@ -3,6 +3,8 @@ function Ball(x, y, speedX, speedY, screen){
     this.y = y;
     this.speedX = speedX;
     this.speedY = speedY;
+    this.width = 25;
+    this.height = 25;
     this.screen = screen;
     this.playerWidth = 400 //TODO: get rid of this
     this.playerHeight = 45 //TODO: get rid of this
@@ -45,14 +47,24 @@ function Ball(x, y, speedX, speedY, screen){
     this.speedX *= -1;
   }
 
-  this.updateLoc = function(){
+  this.updateLocWithSpeed = function(){
     this.x += this.speedX;
     this.y += this.speedY;
+  }
+
+  this.updateLocWithLoc = function(x, y){
+    this.x = x;
+    this.y = y;
+  }
+
+  this.show = function(){
+    rectMode("CENTER");
+    rect(this.x, this.y, this.width, this.height);
   }
 }
 
 if(typeof window !== 'undefined'){
-    window.mydata = Ball;
+    window.Ball = Ball;
 } else {
      module.exports = Ball;
 }

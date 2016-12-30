@@ -91,7 +91,7 @@ io.sockets.on('connection', function(socket){
       } else if (ball.ballCollisionPlayer(P2Pos)){
           ball.ballCollisionPlayerReact(P2Pos);
       }
-      ball.updateLoc();
+      ball.updateLocWithSpeed();
       ball.ballCollisionPlayer(P1Pos)
       var data = {
         "P1x" : P1Pos.x,

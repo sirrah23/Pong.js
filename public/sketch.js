@@ -15,13 +15,13 @@ function setup() {
     playerNum = data.playerNum;
     P1 = new Player(data.P1x, data.P1y);
     P2 = new Player(data.P2x, data.P2y);
-    ball = createVector(data.ballX, data.ballY);
+    ball = new window.Ball(data.ballX, data.ballY, -10, -10, {width: 800, height: 640});
   });
 
   socket.on("updateScreen", function(data){
     P1.update(data.P1x, data.P1y);
     P2.update(data.P2x, data.P2y);
-    ball = createVector(data.ballX, data.ballY);
+    ball.updateLocWithLoc(data.ballX, data.ballY);
   });
 }
 
@@ -31,9 +31,8 @@ function draw() {
     P1.show();
   if(P2)
     P2.show();
-  rectMode("CENTER");
   if(ball){
-    rect(ball.x, ball.y, 25, 25);
+    ball.show();
   }
 }
 
