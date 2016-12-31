@@ -14,14 +14,6 @@ var screen = {
     height: 640
 };
 
-//var width = 800;
-//var height = 640;
-
-//var playerWidth = width/2
-//var playerHeight = 45
-
-//TODO: Create full fledged player and ball objects
-
 var P1 = new Player(50, 25, screen.width/2, 45, screen);
 var P2 = new Player(50, screen.height - 75, screen.width/2, 45, screen);
 var ball = new Ball(screen.width/2, screen.height/2, -10, -10, screen);
@@ -40,11 +32,11 @@ io.sockets.on('connection', function(socket){
   if(!P1Socket){
     P1Socket = socket;
     isPlayer = true;
-    playerNum = "P1"
+    playerNum = "P1";
   } else if (!P2Socket){
     P2Socket = socket;
     isPlayer = true;
-    playerNum = "P2"
+    playerNum = "P2";
   } else {
     guestSockets.push(socket);
   }
@@ -59,7 +51,7 @@ io.sockets.on('connection', function(socket){
     "ballY" : ball.y
   };
 
-  socket.emit("connectionSetup", data)
+  socket.emit("connectionSetup", data);
 
   socket.on("updateSpeed", function(data){
       if(data.playerNum === "P1"){
@@ -69,7 +61,6 @@ io.sockets.on('connection', function(socket){
         P2.vel = data.speed;
       }
   });
-
 
   setInterval(function(){
       P1.x = P1.x +  P1.vel; //TODO: Create a method for this...
@@ -97,6 +88,32 @@ io.sockets.on('connection', function(socket){
       socket.emit("updateScreen", data);
   }, 50);
 
+  socket.on("disconnect", function(){
+    if(socket === P1Socket){
+      P1Socket = undefined;
+      isPlayer = false;
+      playerNum = undefined;
+    } else if(socket === P2Socket){
+      P2Socket = undefined;
+      isPlayer = false;
+      playerNum = undefined;
+    }
+    var newSocket;
+    if(guestSockets.length > 0){
+      newSocket = guestSockets.shift();
+      if(!P1Socket){
+        P1Socket = newSocket;
+        isPlayer = true;
+        playerNum = "P1";
+      }else if(!P2Socket){
+        P2Socket = newSocket;
+        isPlayer = true;
+        playerNum = "P2";
+      }
+      var data = {isPlayer, playerNum}; //Guest promoted to player
+      newSocket.emit("promoteToPlayer", data);
+    }
+  });
 });
 
 function abs(n){

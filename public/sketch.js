@@ -8,7 +8,7 @@ var playerNum;
 
 function setup() {
   createCanvas(800, 640);
-  socket = io.connect("http://localhost:8080")
+  socket = io.connect("http://localhost:8080");
 
   socket.on("connectionSetup", function(data){
     var screen = {"width":width, "height": height};
@@ -23,6 +23,11 @@ function setup() {
     P1.update(data.P1x, data.P1y);
     P2.update(data.P2x, data.P2y);
     ball.updateLocWithLoc(data.ballX, data.ballY);
+  });
+
+  socket.on("promoteToPlayer", function(data){
+    isPlayer = data.isPlayer;
+    playerNum = data.playerNum;
   });
 }
 
@@ -42,11 +47,11 @@ function keyPressed(){
     return;
   }
 
-  var data = {}
+  var data = {};
   data.playerNum = playerNum;
 
   if (keyCode === LEFT_ARROW){
-    data.speed = -10
+    data.speed = -10;
     console.log(data);
     socket.emit("updateSpeed", data);
   } else if (keyCode === RIGHT_ARROW){
