@@ -1,6 +1,7 @@
 var express = require('express');
 var socket = require('socket.io');
-var Ball = require('./public/lib/ball.js')
+var Ball = require('./public/lib/ball.js');
+var Player = require('./public/lib/player.js');
 
 var app = express();
 
@@ -13,28 +14,17 @@ var screen = {
     height: 640
 };
 
-var width = 800;
-var height = 640;
+//var width = 800;
+//var height = 640;
 
-var playerWidth = width/2
-var playerHeight = 45
+//var playerWidth = width/2
+//var playerHeight = 45
 
 //TODO: Create full fledged player and ball objects
 
-var P1Pos = {
-    "x" : 50,
-    "y" : 25
-};
-
-var P2Pos = {
-    "x" : 50,
-    "y" : height - 75,
-}
-
-var ball = new Ball(width/2, height/2, -10, -10, screen);
-
-var P1Speed = 0;
-var P2Speed = 0;
+var P1 = new Player(50, 25, screen.width/2, 45, screen);
+var P2 = new Player(50, screen.height - 75, screen.width/2, 45, screen);
+var ball = new Ball(screen.width/2, screen.height/2, -10, -10, screen);
 
 app.use(express.static('public'));
 
@@ -61,10 +51,10 @@ io.sockets.on('connection', function(socket){
   var data = {
     "isPlayer" : isPlayer,
     "playerNum" : playerNum,
-    "P1x" : P1Pos.x,
-    "P1y" : P1Pos.y,
-    "P2x" : P2Pos.x,
-    "P2y" : P2Pos.y,
+    "P1x" : P1.x,
+    "P1y" : P1.y,
+    "P2x" : P2.x,
+    "P2y" : P2.y,
     "ballX" : ball.x,
     "ballY" : ball.y
   };
@@ -72,48 +62,42 @@ io.sockets.on('connection', function(socket){
   socket.emit("connectionSetup", data)
 
   socket.on("updateSpeed", function(data){
-      if(data.playerNum === "P1")
-        P1Speed = data.speed;
-      else
-        P2Speed = data.speed;
+      if(data.playerNum === "P1"){
+        P1.vel = data.speed;
+      }
+      else{
+        P2.vel = data.speed;
+      }
   });
 
 
   setInterval(function(){
-      P1Pos.x += P1Speed;
-      P2Pos.x += P2Speed;
+      P1.x = P1.x +  P1.vel; //TODO: Create a method for this...
+      P2.x = P2.x +  P2.vel;
       if (ball.ballGoal()){
         ball.ballReset();
       } else if (ball.ballCollisionSides()){
         ball.invertXSpeed();
-      } else if(ball.ballCollisionPlayer(P1Pos)){
-          ball.ballCollisionPlayerReact(P1Pos);
-      } else if (ball.ballCollisionPlayer(P2Pos)){
-          ball.ballCollisionPlayerReact(P2Pos);
+      } else if(ball.ballCollisionPlayer(P1)){
+          ball.ballCollisionPlayerReact(P1);
+      } else if (ball.ballCollisionPlayer(P2)){
+          ball.ballCollisionPlayerReact(P2);
       }
       ball.updateLocWithSpeed();
-      ball.ballCollisionPlayer(P1Pos)
       var data = {
-        "P1x" : P1Pos.x,
-        "P1y" : P1Pos.y,
-        "P2x" : P2Pos.x,
-        "P2y" : P2Pos.y,
+        "P1x" : P1.x,
+        "P1y" : P1.y,
+        "P2x" : P2.x,
+        "P2y" : P2.y,
         "ballX" : ball.x,
         "ballY" : ball.y
       };
-      checkPos();
+      P1.edgeCheck();
+      P2.edgeCheck();
       socket.emit("updateScreen", data);
   }, 50);
 
 });
-
-function checkPos(){
-  if(P1Pos.x < 0){
-    P1Pos.x = 0;
-  }else if (P1Pos.x > width){
-    P1Pos.x = width - playerWidth;
-  }
-}
 
 function abs(n){
   if(n < 0){

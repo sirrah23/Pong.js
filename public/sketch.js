@@ -11,11 +11,12 @@ function setup() {
   socket = io.connect("http://localhost:8080")
 
   socket.on("connectionSetup", function(data){
+    var screen = {"width":width, "height": height};
     isPlayer = data.isPlayer;
     playerNum = data.playerNum;
-    P1 = new Player(data.P1x, data.P1y);
-    P2 = new Player(data.P2x, data.P2y);
-    ball = new window.Ball(data.ballX, data.ballY, -10, -10, {width: 800, height: 640});
+    P1 = new window.Player(data.P1x, data.P1y, width/2, 45, screen);
+    P2 = new window.Player(data.P2x, data.P2y, width/2, 45, screen);
+    ball = new window.Ball(data.ballX, data.ballY, -10, -10, screen);
   });
 
   socket.on("updateScreen", function(data){
@@ -46,9 +47,11 @@ function keyPressed(){
 
   if (keyCode === LEFT_ARROW){
     data.speed = -10
+    console.log(data);
     socket.emit("updateSpeed", data);
   } else if (keyCode === RIGHT_ARROW){
     data.speed = 10;
+    console.log(data);
     socket.emit("updateSpeed", data);
   }
 }

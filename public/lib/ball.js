@@ -6,14 +6,12 @@ function Ball(x, y, speedX, speedY, screen){
     this.width = 25;
     this.height = 25;
     this.screen = screen;
-    this.playerWidth = 400 //TODO: get rid of this
-    this.playerHeight = 45 //TODO: get rid of this
 
   //TODO: Get rid of globals
 
   this.ballCollisionPlayer = function(player){
-    if (this.x < player.x || this.x > (player.x + this.playerWidth)
-      || this.y < player.y || this.y > (player.y + this.playerHeight)){
+    if (this.x < player.x || this.x > (player.x + player.width)
+      || this.y < player.y || this.y > (player.y + player.height)){
         return false;
       }
       return true;
@@ -28,6 +26,7 @@ function Ball(x, y, speedX, speedY, screen){
   }
 
   this.ballReset = function(){
+      //TODO: randomize this
       this.x=screen.width/2;
       this.y=screen.height/2;
       this.speedX=-10;
@@ -36,7 +35,7 @@ function Ball(x, y, speedX, speedY, screen){
 
   this.ballCollisionPlayerReact = function(player){
       this.speedY *= -1;
-      if (this.x < player.x + this.playerWidth/2){
+      if (this.x < player.x + player.width/2){
           this.speedX = Math.abs(this.speedX) * -1
       } else {
           this.speedX = Math.abs(this.speedX);

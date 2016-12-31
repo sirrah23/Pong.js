@@ -1,9 +1,10 @@
-function Player(x, y){
+function Player(x, y, width, height, screen){
   this.x = x;
   this.y = y;
-  this.width = width/2;
+  this.width = width;
   this.height = 45;
   this.vel = 0;
+  this.screen = screen;
 
   this.show = function(){
     stroke(255);
@@ -23,9 +24,15 @@ function Player(x, y){
   this.edgeCheck = function(){
     if (this.x < 0){
       this.x = 0;
-    } else if (this.x + this.width > width){
-      this.x = width - this.width;
+    } else if ((this.x + this.width) > this.screen.width){
+      this.x = this.screen.width - this.width;
     }
   };
 
+}
+
+if(typeof window !== 'undefined'){
+    window.Player = Player;
+} else {
+     module.exports = Player;
 }
